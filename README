@@ -1,0 +1,60 @@
+Discord LFG Bot
+===============
+
+This bot is for running a 'looking-for-group' command on a Discord
+server that enables users to signal which games they'd like to party up
+with others and play.
+
+User Commands:
+
+ * *!lfg list-games - Lists available games you can find a group for.
+      These are set by the server moderators.
+ * *!lfg add _game_* - Adds the '_game_' role to your user
+ * *!lfg remove _game_* - Removes the '_game_' role from your user
+
+Moderator Commands:
+
+ * *!lfg add-game '_game_' - Creates a new LFG group for
+   '_game_'
+ * *!lfg remove-game '_game_' - Deletes the LFG group for '_game_'
+   removing the role from all users, and archiving the associated
+   channel.
+
+Example Usage
+-------------
+```
+!lfg Rocket League
+> Rocket League is not an available LFG group
+!lfg add-game Rocket League
+!lfg list-games
+> Game [aliases]
+> League of Legends [LoL, league]
+> Valorant [val]
+> Rocket League [RL]
+!lfg Rocket League
+> <user> group up in #rocket-league
+```
+
+Technicals
+----------
+The 'groups' are roles assigned to the bot and users who request to be
+added to an 'lfg'. These roles map to associated channels that are
+hidden to all but the role users. This provides a way to create
+user-specific LFG channels without cluttering the list and requiring
+users to scroll through _all_ the LFG channels.
+
+OPTIONAL: After a user goes inactive for an hour, they are kicked from
+the LFG channel and the role remove from their account.
+
+When the bot goes offline, roles must be re-added by an admin. These
+roles corresond to the channels and when they are explicitly removed,
+the channels are archived / closed.
+
+
+Management Notes
+----------------
+
+If the bot goes offline, roles will need to be repopulated. The bot will
+lookup the channel associated with that role, and for every member of
+the channel re-add the role if it doesn't exist, and reset the user's
+expiration timer.

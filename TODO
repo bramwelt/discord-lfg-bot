@@ -1,0 +1,25 @@
+Enhancements
+- Use in memory cache of roles and channels to reduce calls to server
+- When using 'list-games', see if we can't write out the roles without pinging everyone
+- Remove bot user role from list of games (roles) returned
+  - If no roles, then mention so
+- Format list-games output as list
+- Make `!lfg add` default command if no command passed
+- Handle 
+- Add help command
+- Restrict 'add-game' 'remove-game' to list of admins
+- Support config file for admin list
+- Handle missing arguments # (discord.ext.commands.errors.MissingRequiredArgument)
+- Provide error response to author
+- Only add role if it doesn't exist (add-game)
+- Set a random color on the role (add-game)
+- Create channel under optional ChannelGroup (add-game)
+- Async Scheduled Cleanup of channels (close, if no one but bot with
+  role), recreate in `add` if it doesn't exist
+- Convert to Cog
+- Package and distribute
+  Docker container?
+  PyPI package?
+- Add basic caching for roles and channels
+- Find hosting option
+  OpenShift?
