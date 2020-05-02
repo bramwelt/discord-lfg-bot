@@ -1,4 +1,6 @@
 """LFG Bot"""
+import logging
+import sys
 from os import getenv
 
 import discord
@@ -8,6 +10,13 @@ DESCRIPTION = '''An LFG bot.'''
 TOKEN = getenv("BOT_TOKEN")
 
 bot = commands.Bot(command_prefix='!', description=DESCRIPTION)
+
+logging.basicConfig(
+    stream=sys.stdout,
+    level=logging.INFO,
+    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s'
+)
+logger = logging.getLogger('lfg')
 
 
 def role_to_slug(role: str):
@@ -30,16 +39,14 @@ def available_games(ctx):
 @bot.event
 async def on_ready():
     """On Ready output"""
-    print('Logged in as')
-    print(bot.user.name)
-    print(bot.user.id)
-    print('------')
+    logger.info(f'Logged in as {bot.user.name}: {bot.user.id}')
 
 @bot.group()
 async def lfg(ctx):
     """Looking For Group command group
     All commands are a sub-command of this group.
     """
+    logger.info(f'"{ctx.message.content}" recieved from {ctx.message.author} on {ctx.guild}')
     if ctx.invoked_subcommand is None:
         lfg_commands = [command.name for command in lfg.commands]
         await ctx.send('Missing command. Pass one of: {0}'.format(", ".join(lfg_commands)))
@@ -75,7 +82,7 @@ async def add_to_group(ctx, *, game: str):
         return
 
     # If so, add the member to the role
-    print("Adding user to role {0.name}".format(game_role))
+    logger.info(f'{member} added to role {game} on {guild}')
     await member.add_roles(game_role)
     channel_name = role_to_slug(game_role.name)
     channel = discord.utils.get(guild.text_channels, name=channel_name)
@@ -101,6 +108,7 @@ async def remove_from_group(ctx, *, game: str):
         return
 
     # If so, remove the member from the role
+    logger.info(f'{member} removed role {game} on {ctx.guild}')
     await member.remove_roles(game_role)
 
 @commands.guild_only()
@@ -111,11 +119,11 @@ async def add_game(ctx, *, game: str):
     channels = guild.channels
 
     role = await guild.create_role(name=game_to_role(game))
-    print("Adding role: {}".format(role.name))
 
     # Add bot to role
     bot_member = ctx.guild.get_member(bot.user.id)
     await bot_member.add_roles(role)
+    logger.info(f'{role.name} created on {guild}')
 
     channel = None
     for chan in channels:
